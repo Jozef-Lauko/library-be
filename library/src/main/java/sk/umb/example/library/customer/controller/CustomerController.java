@@ -16,12 +16,12 @@ public class CustomerController {
 
     @GetMapping("/api/customers/{customerId}")
     public void getCustomer(@PathVariable Long customerId) {
-        System.out.println("Get customer called.");
+        System.out.println("Get customer called: ID = " + customerId);
     }
 
     @PostMapping("/api/customers/{customerId}")
-    public void createCustomer() {
-        System.out.println("Create customer called:");
+    public void createCustomer(@PathVariable Long customerId) {
+        System.out.println("Create customer called: ID = " + customerId);
     }
 
     @PutMapping("/api/customers/{customerId}")
@@ -31,6 +31,6 @@ public class CustomerController {
 
     @DeleteMapping ("/api/customers/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId) {
-        System.out.println("Delete customer called.");
+        System.out.println("Delete customer called: ID = " + customerId);
     }
 }
