@@ -15,23 +15,23 @@ public class BorrowingController {
     }
 
     @GetMapping("/api/borrowings/{borrowingId}")
-    public void getBorrowing(@PathVariable Long borrowingID) {
-        System.out.println("Get borrowing called: ID = " + borrowingID);
+    public void getBorrowing(@PathVariable Long borrowingId) {
+        System.out.println("Get borrowing called: ID = " + borrowingId);
     }
 
     @PostMapping("/api/borrowings/{borrowingId}")
-    public void createBorrowing(@PathVariable Long borrowingID) {
-        System.out.println("Create borrowing called: ID = " + borrowingID);
+    public void createBorrowing(@PathVariable Long borrowingId) {
+        System.out.println("Create borrowing called: ID = " + borrowingId);
     }
 
     @PutMapping("/api/borrowings/{borrowingId}")
-    public void updateBorrowing(@PathVariable Long borrowingID) {
-        System.out.println("Update borrowing called: ID = " + borrowingID);
+    public void updateBorrowing(@PathVariable Long borrowingId) {
+        System.out.println("Update borrowing called: ID = " + borrowingId);
     }
 
     @DeleteMapping ("/api/borrowings/{borrowingId}")
-    public void deleteBorrowing(@PathVariable Long borrowingID) {
-        System.out.println("Delete borrowing called: ID = " + borrowingID);
+    public void deleteBorrowing(@PathVariable Long borrowingId) {
+        System.out.println("Delete borrowing called: ID = " + borrowingId);
     }
 }
 
