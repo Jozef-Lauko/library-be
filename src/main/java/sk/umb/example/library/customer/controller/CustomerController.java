@@ -7,6 +7,7 @@ import java.util.List;
 
 @RestController
 public class CustomerController {
+
     @GetMapping("/api/customers")
     public void searchCustomer(@RequestParam(required = false)String lastName){
         System.out.println("Search customer called.");
@@ -30,4 +31,5 @@ public class CustomerController {
     public void deleteCustomer(@PathVariable Long customerId){
         System.out.println("Delete customer called: ID = " + customerId);
     }
+
 }
