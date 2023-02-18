@@ -32,9 +32,5 @@ public class CategoryController {
         System.out.println("Delete category" + categoryId);
     }
 
-
-
-
-
     
 }
