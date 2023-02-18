@@ -10,10 +10,9 @@ import java.util.List;
 @RestController
 public class CustomerController {
     @GetMapping("/api/customers")
-    public List CustomerSearchDTO(@RequestParam(required = false) String lastName){
+    public void CustomerSearchDTO(@RequestParam(required = false) String lastName){
         System.out.println("Search customer called.");
 
-        return Collections.emptyList();
     }
 
     @GetMapping("/api/customers/{customerId}")
@@ -27,7 +26,7 @@ public class CustomerController {
         System.out.println("Create customer called:");
     }
 
-    @PutMapping("/api/cistomers/{customeId}")
+    @PutMapping("/api/customers/{customeId}")
     public void updateCustomer(@PathVariable Long customerId){
         System.out.println("Update customer called: ID = " + customerId);
     }
