@@ -31,15 +31,4 @@ public class CategoryController {
     public void deleteCategory(@PathVariable Long categoryId){
         System.out.println("Delete category" + categoryId);
     }
-<<<<<<< HEAD
 }
-
-=======
-
-
-
-
-
-    
-}
->>>>>>> customer_control_Lukas
