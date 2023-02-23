@@ -1,5 +1,6 @@
 package sk.umb.example.library.borrowing.service;
 
+import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
 
 import java.util.Date;
@@ -7,7 +8,8 @@ import java.util.Date;
 public class BorrowingDetailDTO {
     private Long id;
     private CustomerDetailDTO customerDetailDTO;
-//    private BookDetailDTO bookDetailDTO;
+    private BookDetailDTO bookDetailDTO;
+
 //    Date of borrowing
     private Date date;
 
