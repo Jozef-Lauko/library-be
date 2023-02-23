@@ -1,54 +1,81 @@
 package sk.umb.example.library.customer.service;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class CustomerService {
-    private final List<CustomerDto> customers = new ArrayList<>();
+    private final AtomicLong lastIndex = new AtomicLong(0);
 
-    public List<CustomerDto> getAllCustomers() {
-        return customers;
+    private final Map<Long, CustomerDetailDTO> customerDatabase = new HashMap();
+
+    public List<CustomerDetailDTO> getAllCustomers() {
+        return new ArrayList<>(customerDatabase.values());
     }
 
-    public CustomerDto getCustomerById(Long customerId) {
-        int index = customerId.intValue();
+    public List<CustomerDetailDTO> searchCustomerByLastName(String lastName) {
+        return customerDatabase.values().stream()
+                .filter(dto -> lastName.equals(dto.getLastName()))
+                .toList();
+    }
 
-        if (index >= customers.size()){
-            return new CustomerDto();
+    public CustomerDetailDTO getCustomerById(Long customerId) {
+        validateCustomerExists(customerId);
+
+        return customerDatabase.get(customerId);
+    }
+
+    public Long createCustomer(CustomerRequestDTO customerRequestDTO) {
+        CustomerDetailDTO customerDetailDTO = mapToCustomerDetailDTO(lastIndex.getAndIncrement(),
+                customerRequestDTO);
+
+        customerDatabase.put(customerDetailDTO.getId(), customerDetailDTO);
+
+        return customerDetailDTO.getId();
+    }
+
+    private static CustomerDetailDTO mapToCustomerDetailDTO(Long index, CustomerRequestDTO customerRequestDTO) {
+        CustomerDetailDTO dto = new CustomerDetailDTO();
+
+        dto.setId(index);
+        dto.setLastName(customerRequestDTO.getLastName());
+        dto.setFirstName(customerRequestDTO.getFirstName());
+        dto.setEmailContact(customerRequestDTO.getEmailContact());
+
+        return dto;
+    }
+
+    public void updateCustomer(Long customerId, CustomerRequestDTO customerRequestDTO) {
+        validateCustomerExists(customerId);
+
+        CustomerDetailDTO customerDetailDTO = customerDatabase.get(customerId);
+
+        if (! Strings.isEmpty(customerRequestDTO.getFirstName())) {
+            customerDetailDTO.setFirstName(customerRequestDTO.getFirstName());
         }
 
-        return customers.get(customerId.intValue());
+        if (! Strings.isEmpty(customerRequestDTO.getLastName())) {
+            customerDetailDTO.setLastName(customerRequestDTO.getLastName());
+        }
+
+        if (! Strings.isEmpty(customerRequestDTO.getEmailContact())) {
+            customerDetailDTO.setEmailContact(customerRequestDTO.getEmailContact());
+        }
     }
 
-    public Long createCustomer(CustomerRequestDto customer) {
-        Long customerId = (long) customers.size();
-
-        CustomerDto customerDto = mapToCustomerDto(customer);
-        customerDto.setId(customerId);
-
-        customers.add(customerDto);
-
-        return customerId;
-    }
-
-    private static CustomerDto mapToCustomerDto(CustomerRequestDto customer){
-        CustomerDto customerDto = new CustomerDto();
-
-        customerDto.setFirstName(customer.getFirstName());
-        customerDto.setLastName(customer.getLastName());
-        customerDto.setContact(customerDto.getContact());
-
-        return customerDto;
-    }
-
-    public void updateCustomer(Long customerId, CustomerRequestDto customer) {
-
+    private void validateCustomerExists(Long customerId) {
+        if (! customerDatabase.containsKey(customerId)) {
+            throw new IllegalArgumentException("CustomerId: " + customerId + " does not exists!");
+        }
     }
 
     public void deleteCustomer(Long customerId) {
-        customers.remove(customerId.intValue());
+        customerDatabase.remove(customerId);
     }
 }

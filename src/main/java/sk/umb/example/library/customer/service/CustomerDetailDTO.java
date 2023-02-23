@@ -1,10 +1,11 @@
 package sk.umb.example.library.customer.service;
 
-public class CustomerDto {
+public class CustomerDetailDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private String contact;
+
+    private String emailContact;
 
     public Long getId() {
         return id;
@@ -30,11 +31,11 @@ public class CustomerDto {
         this.lastName = lastName;
     }
 
-    public String getContact() {
-        return contact;
+    public String getEmailContact() {
+        return emailContact;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setEmailContact(String emailContact) {
+        this.emailContact = emailContact;
     }
 }
