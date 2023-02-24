@@ -7,7 +7,6 @@ public class BorrowingRequestDTO {
     private CustomerDetailDTO customerId;
     private BookDetailDTO bookId;
 
-
     public CustomerDetailDTO getCustomerId() {
         return customerId;
     }

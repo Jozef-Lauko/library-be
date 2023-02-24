@@ -1,11 +1,9 @@
 package sk.umb.example.library.borrowing.service;
 
-import org.apache.logging.log4j.util.Strings;
+import sk.umb.example.library.customer.service.CustomerDetailDTO;
+import sk.umb.example.library.customer.service.CustomerRequestDTO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class BorrowingService {
@@ -17,12 +15,6 @@ public class BorrowingService {
         return new ArrayList<>(borrowingDatabase.values());
     }
 
-    public List<BorrowingDetailDTO> searchBorrowingByLastName(String lastName) {
-        return borrowingDatabase.values().stream()
-                .filter(dto -> lastName.equals(dto.getCustomerDetailDTO().getLastName()))
-                .toList();
-    }
-
     public BorrowingDetailDTO getBorrowingById(Long borrowingId) {
         validateBorrowingExists(borrowingId);
 
@@ -30,37 +22,28 @@ public class BorrowingService {
     }
 
     public Long createBorrowing(BorrowingRequestDTO borrowingRequestDTO) {
-        BorrowingDetailDTO borrowingDetailDTO = mapToBorrowingDetialDTO(lastIndex.getAndIncrement(), borrowingRequestDTO);
+        BorrowingDetailDTO borrowingDetailDTO = mapToBorrowingDetailDTO(lastIndex.getAndIncrement(),
+                borrowingRequestDTO);
 
         borrowingDatabase.put(borrowingDetailDTO.getId(), borrowingDetailDTO);
 
         return borrowingDetailDTO.getId();
     }
 
-    public void updateBorrowing(Long borrowingId, BorrowingRequestDTO borrowingRequestDTO) {
-        validateBorrowingExists(borrowingId);
-
-        BorrowingDetailDTO borrowingDetailDTO = borrowingDatabase.get(borrowingId);
-
-        if (borrowingRequestDTO.getCustomerId() != null) {
-            borrowingDetailDTO.setId(borrowingRequestDTO.getCustomerId().getId());
-        }
-    }
-
-    private BorrowingDetailDTO mapToBorrowingDetialDTO(long index, BorrowingRequestDTO borrowingRequestDTO) {
+    private static BorrowingDetailDTO mapToBorrowingDetailDTO(Long index, BorrowingRequestDTO borrowingRequestDTO) {
         BorrowingDetailDTO dto = new BorrowingDetailDTO();
 
         dto.setId(index);
         dto.setCustomerDetailDTO(borrowingRequestDTO.getCustomerId());
-//        dto.setBookDetailDTO(borrowingRequestDTO.geBookId());
+        dto.setBookDetailDTO(borrowingRequestDTO.getBookId());
+        dto.setDate(new Date());
 
         return dto;
     }
 
     private void validateBorrowingExists(Long borrowingId) {
-        if (!borrowingDatabase.containsKey(borrowingId)) {
-            throw new IllegalArgumentException("BorrowingId: "+borrowingId+ " does not exists!");
+        if(! borrowingDatabase.containsKey(borrowingId)) {
+            throw new IllegalArgumentException("BorrowingID: "+borrowingId+" does not exist.");
         }
     }
-
 }

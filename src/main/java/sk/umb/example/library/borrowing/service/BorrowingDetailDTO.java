@@ -9,10 +9,7 @@ public class BorrowingDetailDTO {
     private Long id;
     private CustomerDetailDTO customerDetailDTO;
     private BookDetailDTO bookDetailDTO;
-
-//    Date of borrowing
     private Date date;
-
 
     public Long getId() {
         return id;
@@ -30,6 +27,14 @@ public class BorrowingDetailDTO {
         this.customerDetailDTO = customerDetailDTO;
     }
 
+    public BookDetailDTO getBookDetailDTO() {
+        return bookDetailDTO;
+    }
+
+    public void setBookDetailDTO(BookDetailDTO bookDetailDTO) {
+        this.bookDetailDTO = bookDetailDTO;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -37,5 +42,4 @@ public class BorrowingDetailDTO {
     public void setDate(Date date) {
         this.date = date;
     }
-
 }
