@@ -34,17 +34,19 @@ public class BorrowingController {
 
         return borrowingService.createBorrowing(borrowingRequestDTO);
     }
-//
-//    @PutMapping("/api/borrowings/{borrowingId}")
-//    public void updateBorrowing(@PathVariable Long borrowingId, @RequestBody BorrowingRequestDTO borrowingRequestDTO) {
-//        System.out.println("Update borrowing called: ID");
-//
-//        borrowingService.updateBorrowing(borrowingId, borrowingRequestDTO);
-//    }
-//
-//    @DeleteMapping ("/api/borrowings/{borrowingId}")
-//    public void deleteBorrowing(@PathVariable Long borrowingId) {
-//        System.out.println("Delete borrowing called: ID = " + borrowingId);
-//    }
+
+    @PutMapping("/api/borrowings/{borrowingId}")
+    public void updateBorrowing(@PathVariable Long borrowingId, @RequestBody BorrowingRequestDTO borrowingRequestDTO) {
+        System.out.println("Update borrowing called: ID");
+
+        borrowingService.updateBorrowing(borrowingId, borrowingRequestDTO);
+    }
+
+    @DeleteMapping ("/api/borrowings/{borrowingId}")
+    public void deleteBorrowing(@PathVariable Long borrowingId) {
+        System.out.println("Delete borrowing called: ID = " + borrowingId);
+
+        borrowingService.deleteBorrowing(borrowingId);
+    }
 }
 
