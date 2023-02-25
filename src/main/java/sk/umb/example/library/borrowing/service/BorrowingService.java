@@ -1,10 +1,8 @@
 package sk.umb.example.library.borrowing.service;
 
 import sk.umb.example.library.book.service.BookDetailDTO;
-import sk.umb.example.library.book.service.BookService;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
-import sk.umb.example.library.customer.service.CustomerRequestDTO;
-import sk.umb.example.library.customer.service.CustomerService;
+
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
