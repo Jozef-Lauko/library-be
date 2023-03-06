@@ -3,7 +3,7 @@ package sk.umb.example.library.customer.controller;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.bind.annotation.*;
 import sk.umb.example.library.customer.service.CustomerRequestDto;
-import sk.umb.example.library.customer.service.CustomerDetailDto;
+import sk.umb.example.library.customer.service.CustomerDetailDTO;
 import sk.umb.example.library.customer.service.CustomerService;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class CustomerController {
     }
 
     @GetMapping("/api/customers")
-    public List<CustomerDetailDto> searchCustomer(@RequestParam(required = false) String lastName) {
+    public List<CustomerDetailDTO> searchCustomer(@RequestParam(required = false) String lastName) {
         System.out.println("Search customer called twice.");
 
         return Strings.isEmpty(lastName) ? customerService.getAllCustomers()
@@ -25,7 +25,7 @@ public class CustomerController {
     }
 
     @GetMapping("/api/customers/{customerId}")
-    public CustomerDetailDto getCustomer(@PathVariable Long customerId) {
+    public CustomerDetailDTO getCustomer(@PathVariable Long customerId) {
         System.out.println("Get customer called.");
         return customerService.getCustomerById(customerId);
     }
