@@ -1,11 +1,34 @@
-package sk.umb.example.library.customer.service;
+package sk.umb.example.library.customer.persistence.entity;
 
-public class CustomerDetailDto {
+import sk.umb.example.library.address.persistence.entity.AddressEntity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity(name = "customer")
+public class CustomerEntity {
+    @Id
+    @GeneratedValue
     private Long id;
+
     private String firstName;
+
     private String lastName;
 
     private String emailContact;
+
+    @ManyToOne
+    private AddressEntity address;
+
+    public AddressEntity getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressEntity address) {
+        this.address = address;
+    }
 
     public Long getId() {
         return id;

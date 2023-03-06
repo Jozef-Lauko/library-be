@@ -13,35 +13,35 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CustomerService {
     private final AtomicLong lastIndex = new AtomicLong(0);
 
-    private final Map<Long, CustomerDetailDTO> customerDatabase = new HashMap();
+    private final Map<Long, CustomerDetailDto> customerDatabase = new HashMap();
 
-    public List<CustomerDetailDTO> getAllCustomers() {
+    public List<CustomerDetailDto> getAllCustomers() {
         return new ArrayList<>(customerDatabase.values());
     }
 
-    public List<CustomerDetailDTO> searchCustomerByLastName(String lastName) {
+    public List<CustomerDetailDto> searchCustomerByLastName(String lastName) {
         return customerDatabase.values().stream()
-                .filter(dto -> lastName.equals(dto.getLastName()))
-                .toList();
+                                        .filter(dto -> lastName.equals(dto.getLastName()))
+                                        .toList();
     }
 
-    public CustomerDetailDTO getCustomerById(Long customerId) {
+    public CustomerDetailDto getCustomerById(Long customerId) {
         validateCustomerExists(customerId);
 
         return customerDatabase.get(customerId);
     }
 
-    public Long createCustomer(CustomerRequestDTO customerRequestDTO) {
-        CustomerDetailDTO customerDetailDTO = mapToCustomerDetailDTO(lastIndex.getAndIncrement(),
-                customerRequestDTO);
+    public Long createCustomer(CustomerRequestDto customerRequestDTO) {
+        CustomerDetailDto customerDetailDTO = mapToCustomerDetailDTO(lastIndex.getAndIncrement(),
+                                                                     customerRequestDTO);
 
         customerDatabase.put(customerDetailDTO.getId(), customerDetailDTO);
 
         return customerDetailDTO.getId();
     }
 
-    private static CustomerDetailDTO mapToCustomerDetailDTO(Long index, CustomerRequestDTO customerRequestDTO) {
-        CustomerDetailDTO dto = new CustomerDetailDTO();
+    private static CustomerDetailDto mapToCustomerDetailDTO(Long index, CustomerRequestDto customerRequestDTO) {
+        CustomerDetailDto dto = new CustomerDetailDto();
 
         dto.setId(index);
         dto.setLastName(customerRequestDTO.getLastName());
@@ -51,10 +51,10 @@ public class CustomerService {
         return dto;
     }
 
-    public void updateCustomer(Long customerId, CustomerRequestDTO customerRequestDTO) {
+    public void updateCustomer(Long customerId, CustomerRequestDto customerRequestDTO) {
         validateCustomerExists(customerId);
 
-        CustomerDetailDTO customerDetailDTO = customerDatabase.get(customerId);
+        CustomerDetailDto customerDetailDTO = customerDatabase.get(customerId);
 
         if (! Strings.isEmpty(customerRequestDTO.getFirstName())) {
             customerDetailDTO.setFirstName(customerRequestDTO.getFirstName());
