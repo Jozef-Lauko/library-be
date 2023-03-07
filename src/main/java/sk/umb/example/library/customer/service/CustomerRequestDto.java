@@ -1,10 +1,20 @@
 package sk.umb.example.library.customer.service;
 
-public class CustomerRequestDTO {
+public class CustomerRequestDto {
     private String firstName;
     private String lastName;
 
     private String emailContact;
+
+    private Long addressId;
+
+    public Long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
 
     public String getFirstName() {
         return firstName;

@@ -1,5 +1,7 @@
 package sk.umb.example.library.borrowing.service;
 
+import sk.umb.example.library.customer.service.CustomerDetailDTO;
+
 public class BorrowingRequestDTO {
     private Long customerId;
     private Long bookId;
