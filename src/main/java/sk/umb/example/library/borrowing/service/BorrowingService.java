@@ -10,6 +10,7 @@ import sk.umb.example.library.borrowing.persistance.repository.BorrowingReposito
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
+import sk.umb.example.library.customer.service.CustomerService;
 
 /* TODO
     - pockat na BOOK
@@ -35,7 +36,7 @@ public class BorrowingService {
     }
 
     public BorrowingDetailDTO getBorrowingById(Long borrowingId) {
-        return maptoDto(getBorrwingEntityById(borrowingId));
+        return maptoDto(getBorrowingEntityByID(borrowingId));
     }
 
     @Transactional
@@ -46,17 +47,20 @@ public class BorrowingService {
 
     @Transactional
     public void updateBorrowing(Long borrowingId, BorrowingRequestDTO borrowingRequestDTO) {
-        BorrowingEntity entity = getBorrowingEntityByID(borrowingId);
+        BorrowingEntity borrowing = getBorrowingEntityByID(borrowingId);
 
-        if(!Strings.isEmpty(borrowingRequestDTO.getCustomerId())){
-            entity.setCustomerDetailDTO(borrowingRequestDTO.getCustomerId());
+        BorrowingEntity updatedBorrowingEntity = mapToEntity(borrowingRequestDTO);
+        BorrowingDetailDTO updatedDto = maptoDto(updatedBorrowingEntity);
+
+        if((borrowingRequestDTO.getCustomerId()) != null){
+            borrowing.setCustomerDetailDTO(updatedDto.getCustomerDetailDTO());
         }
 
-        if(!Strings.isEmpty(borrowingRequestDTO.getBookId())){
-            entity.setBookDetailDTO(borrowingRequestDTO.getBookId());
+        if((borrowingRequestDTO.getBookId()) != null){
+            borrowing.setBookDetailDTO(updatedDto.getBookDetailDTO());
         }
 
-        entity.setDate(new Date());
+        borrowing.setDate(new Date());
     }
 
     @Transactional
@@ -65,32 +69,32 @@ public class BorrowingService {
     }
 
     private BorrowingEntity getBorrowingEntityByID(Long borrowingId) {
-        Optional<BorrowingEntity>entity = borrowingRepository.findById(borrowingId);
+        Optional<BorrowingEntity>borrowing = borrowingRepository.findById(borrowingId);
 
-        if(entity.isEmpty()) {
+        if(borrowing.isEmpty()) {
             throw new IllegalArgumentException("Borrowing not found. ID: " + borrowingId);
         }
 
-        return entity.get();
+        return borrowing.get();
     }
 
 
     private BorrowingEntity mapToEntity(BorrowingRequestDTO dto) {
-        BorrowingEntity entity = new BorrowingEntity();
+        BorrowingEntity borrowing = new BorrowingEntity();
 
         if(!Objects.isNull(dto.getCustomerId()) ){
-            Optional<CustomerEntity>customer = customerRepository.findById()(dto.getCustomerId());
+            Optional<CustomerEntity>customer = customerRepository.findById(dto.getCustomerId());
 
             if(customer.isPresent()){
-                entity.setCustomer(customer.get());
+                borrowing.setCustomer(customer.get());
             }
         }
 
         if(!Objects.isNull(dto.getBookId()) ){
-            Optional<BookEntity>book = bookRepository.findById()(dto.getBookId());
+            Optional<BookEntity>book = bookRepository.findById(dto.getBookId());
 
             if(book.isPresent()){
-                entity.setBookEntity(book.get());
+                borrowing.setBookEntity(book.get());
             }
         }
 
@@ -104,6 +108,8 @@ public class BorrowingService {
             BorrowingDetailDTO dto = maptoDto(borrowingEntity);
             borrowings.add(dto);
         });
+
+        return borrowings;
     }
 
     private BorrowingDetailDTO maptoDto(BorrowingEntity borrowingEntity){

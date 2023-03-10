@@ -6,5 +6,5 @@ import sk.umb.example.library.borrowing.persistance.entity.BorrowingEntity;
 
 @Repository
 public interface BorrowingRepository extends CrudRepository<BorrowingEntity, Long> {
-    Iterable<BorrowingEntity> findByLastName(String lastName);
+
 }
