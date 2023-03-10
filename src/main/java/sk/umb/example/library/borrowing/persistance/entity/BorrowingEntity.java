@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import sk.umb.example.library.book.persistance.enity.BookEntity;
 import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;

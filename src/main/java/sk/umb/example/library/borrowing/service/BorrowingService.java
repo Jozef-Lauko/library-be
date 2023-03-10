@@ -1,20 +1,20 @@
 package sk.umb.example.library.borrowing.service;
 
 import jakarta.transaction.Transactional;
-import org.apache.logging.log4j.util.Strings;
 import sk.umb.example.library.address.persistence.entity.AddressEntity;
 import sk.umb.example.library.address.service.AddressDetailDto;
+import sk.umb.example.library.book.persistance.enity.BookEntity;
+import sk.umb.example.library.book.persistance.repository.BookRepository;
 import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.borrowing.persistance.entity.BorrowingEntity;
 import sk.umb.example.library.borrowing.persistance.repository.BorrowingRepository;
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
-import sk.umb.example.library.customer.service.CustomerService;
+
 
 /* TODO
     - pockat na BOOK
-    - spojazdnit: chyby v update borrowing
  */
 
 
@@ -23,12 +23,12 @@ import java.util.*;
 public class BorrowingService {
     private final BorrowingRepository borrowingRepository;
     private final CustomerRepository customerRepository;
-    private final BookRepostirory bookRepostirory;
+    private final BookRepository bookRepository;
 
-    public BorrowingService(BorrowingRepository borrowingRepository, CustomerRepository customerRepository, BookRepostirory bookRepostirory) {
+    public BorrowingService(BorrowingRepository borrowingRepository, CustomerRepository customerRepository, BookRepository bookRepository) {
         this.borrowingRepository = borrowingRepository;
         this.customerRepository = customerRepository;
-        this.bookRepostirory = bookRepostirory;
+        this.bookRepository = bookRepository;
     }
 
     public List<BorrowingDetailDTO> getAllBorrowings() {
@@ -98,7 +98,7 @@ public class BorrowingService {
             }
         }
 
-        return entity;
+        return borrowing;
     }
 
     private List<BorrowingDetailDTO> mapToDtoList(Iterable<BorrowingEntity> borrowingEntities) {
@@ -143,11 +143,18 @@ public class BorrowingService {
         return dto;
     }
 
-    private BookDetailDTO mapToDto(BookEntity book) {
+    private BookDetailDTO mapToDto(BookEntity bookEntity) {
         BookDetailDTO dto = new BookDetailDTO();
 
-//        ****************TODO****************
+        dto.setId(bookEntity.getId());
+        dto.setIsbn(bookEntity.getIsbn());
+        dto.setCount(bookEntity.getCount());
+        dto.setTitle(bookEntity.getTitle());
+        dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
+        dto.setAuthorLastName(bookEntity.getAuthorLastName());
+        dto.setCategoryDetailDTO(bookEntity.getCategory());
 
+        return dto;
     }
 
 }
