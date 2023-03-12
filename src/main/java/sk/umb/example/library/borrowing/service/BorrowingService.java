@@ -1,16 +1,12 @@
 package sk.umb.example.library.borrowing.service;
 
 import jakarta.transaction.Transactional;
-import sk.umb.example.library.address.persistence.entity.AddressEntity;
-import sk.umb.example.library.address.service.AddressDetailDto;
 import sk.umb.example.library.book.persistance.enity.BookEntity;
 import sk.umb.example.library.book.persistance.repository.BookRepository;
-import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.borrowing.persistance.entity.BorrowingEntity;
 import sk.umb.example.library.borrowing.persistance.repository.BorrowingRepository;
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
-import sk.umb.example.library.customer.service.CustomerDetailDTO;
 import java.util.*;
 
 public class BorrowingService {
@@ -108,45 +104,11 @@ public class BorrowingService {
     private BorrowingDetailDTO maptoDto(BorrowingEntity borrowingEntity){
         BorrowingDetailDTO dto = new BorrowingDetailDTO();
         dto.setId(borrowingEntity.getId());
-        dto.setCustomerDetailDTO(mapToDto(borrowingEntity.getCustomer()));
-        dto.setBookDetailDTO(mapToDto(borrowingEntity.getBookEntity()));
+        dto.setCustomerDetailDTO(borrowingEntity.getCustomerDetailDTO());
+        dto.setBookDetailDTO(borrowingEntity.getBookDetailDTO());
         dto.setDate(new Date());
 
         return dto;
     }
 
-    private CustomerDetailDTO mapToDto(CustomerEntity customer) {
-        CustomerDetailDTO dto = new CustomerDetailDTO();
-
-        dto.setId(customer.getId());
-        dto.setAddress(mapToDto(customer.getAddress()));
-        dto.setFirstName(customer.getFirstName());
-        dto.setLastName(customer.getLastName());
-        dto.setEmailContact(customer.getEmailContact());
-
-        return dto;
-    }
-
-    private AddressDetailDto mapToDto(AddressEntity addressEntity) {
-        AddressDetailDto dto = new AddressDetailDto();
-
-        dto.setId(addressEntity.getId());
-        dto.setCity(addressEntity.getCity());
-
-        return dto;
-    }
-
-    private BookDetailDTO mapToDto(BookEntity bookEntity) {
-        BookDetailDTO dto = new BookDetailDTO();
-
-        dto.setId(bookEntity.getId());
-        dto.setIsbn(bookEntity.getIsbn());
-        dto.setCount(bookEntity.getCount());
-        dto.setTitle(bookEntity.getTitle());
-        dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
-        dto.setAuthorLastName(bookEntity.getAuthorLastName());
-        dto.setCategoryDetailDTO(bookEntity.getCategory());
-
-        return dto;
-    }
 }
