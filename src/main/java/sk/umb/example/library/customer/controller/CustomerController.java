@@ -1,23 +1,24 @@
 package sk.umb.example.library.customer.controller;
-
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sk.umb.example.library.customer.service.CustomerRequestDTO;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
+import sk.umb.example.library.customer.service.CustomerRequestDTO;
 import sk.umb.example.library.customer.service.CustomerService;
 
-import java.util.Collections;
 import java.util.List;
+
 
 @RestController
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping("/api/customers")
     public List<CustomerDetailDTO> searchCustomer(@RequestParam(required = false) String lastName) {
-        System.out.println("Search customer called.");
+        System.out.println("Search customer called twice.");
 
         return Strings.isEmpty(lastName) ? customerService.getAllCustomers()
                 : customerService.searchCustomerByLastName(lastName);
