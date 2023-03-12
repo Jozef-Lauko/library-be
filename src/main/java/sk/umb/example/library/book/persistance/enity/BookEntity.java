@@ -1,6 +1,7 @@
 package sk.umb.example.library.book.persistance.enity;
 
 import jakarta.persistence.*;
+import sk.umb.example.library.category.service.CategoryDetailDTO;
 
 @Entity(name = "book")
 public class BookEntity {
@@ -12,12 +13,21 @@ public class BookEntity {
     private String title;
     private String isbn;
     private int count;
+    private CategoryDetailDTO categoryDetailDTO;
 
     @ManyToMany
     @JoinTable(name="category_book",
             joinColumns=@JoinColumn(name="book_id"),
             inverseJoinColumns=@JoinColumn(name="category_id"))
     private Set<Category> categories;
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
 
     public Long getId() {
         return id;
@@ -67,11 +77,11 @@ public class BookEntity {
         this.count = count;
     }
 
-    public CategoryEntity getCategory() {
-        return category;
+    public CategoryDetailDTO getCategory() {
+        return categoryDetailDTO;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
+    public void setCategory(CategoryDetailDTO categoryDetailDTO) {
+        this.categoryDetailDTO = categoryDetailDTO;
     }
 }

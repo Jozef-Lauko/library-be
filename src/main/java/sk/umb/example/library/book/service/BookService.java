@@ -1,58 +1,95 @@
 package sk.umb.example.library.book.service;
 
-import org.apache.logging.log4j.util.Strings;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import sk.umb.example.library.book.persistance.enity.BookEntity;
+import sk.umb.example.library.book.persistance.repository.BookRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Optional;
 
 @Service
 public class BookService {
 
-    private final Map<Long, BookDetailDTO> bookDatabase = new HashMap<>();
-    private final AtomicLong lastIndex = new AtomicLong(0);
-
-    public BookDetailDTO createBook(BookRequestDTO bookRequestDTO) {
-        BookDetailDTO bookDetailDTO = new BookDetailDTO();
-        bookDetailDTO.setId(lastIndex.getAndIncrement());
-        bookDetailDTO.setAuthorFirstName(Strings.isBlank(bookRequestDTO.getAuthorFirstName()) ? null : bookRequestDTO.getAuthorFirstName());
-        bookDetailDTO.setAuthorLastName(Strings.isBlank(bookRequestDTO.getAuthorLastName()) ? null : bookRequestDTO.getAuthorLastName());
-        bookDetailDTO.setTitle(Strings.isBlank(bookRequestDTO.getTitle()) ? null : bookRequestDTO.getTitle());
-        bookDetailDTO.setIsbn(Strings.isBlank(bookRequestDTO.getIsbn()) ? null : bookRequestDTO.getIsbn());
-        bookDetailDTO.setCount(bookRequestDTO.getCount());
-        bookDetailDTO.setCategoryIds(bookRequestDTO.getCategoryIds());
-        bookDatabase.put(bookDetailDTO.getId(), bookDetailDTO);
-        return bookDetailDTO;
-    }
-
-    public BookDetailDTO getBook(Long bookId) {
-        return bookDatabase.get(bookId);
+    private final BookRepository bookRepository;
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     public List<BookDetailDTO> getAllBooks() {
-        return new ArrayList<>(bookDatabase.values());
+        return mapToDtoList(bookRepository.findAll());
+    }
+    public BookDetailDTO getBook(Long bookId) {
+        return mapToDto(getBookEntityByID(bookId));
     }
 
-    public BookDetailDTO updateBook(Long bookId, BookRequestDTO bookRequestDTO) {
-        BookDetailDTO bookDetailDTO = bookDatabase.get(bookId);
-        if (bookDetailDTO != null) {
-            bookDetailDTO.setAuthorFirstName(Strings.isBlank(bookRequestDTO.getAuthorFirstName()) ? null : bookRequestDTO.getAuthorFirstName());
-            bookDetailDTO.setAuthorLastName(Strings.isBlank(bookRequestDTO.getAuthorLastName()) ? null : bookRequestDTO.getAuthorLastName());
-            bookDetailDTO.setTitle(Strings.isBlank(bookRequestDTO.getTitle()) ? null : bookRequestDTO.getTitle());
-            bookDetailDTO.setIsbn(Strings.isBlank(bookRequestDTO.getIsbn()) ? null : bookRequestDTO.getIsbn());
-            bookDetailDTO.setCount(bookRequestDTO.getCount());
-            bookDetailDTO.setCategoryIds(bookRequestDTO.getCategoryIds());
-            return bookDetailDTO;
+    @Transactional
+    public Long createBook(BookRequestDTO bookRequestDTO){
+        BookEntity entity = mapToEntity(bookRequestDTO);
+        return bookRepository.save(entity).getId();
+    }
+
+    @Transactional
+    public void updateBook(Long bookId, BookRequestDTO bookRequestDTO){
+        BookEntity book = getBookEntityByID(bookId);
+
+        BookEntity updateBookEntity = mapToEntity(bookRequestDTO);
+        BookDetailDTO updateDto = mapToDto(updateBookEntity);
+    }
+
+    @Transactional
+    public void deleteBook(Long bookId){
+        bookRepository.deleteById(bookId);
+    }
+
+    private BookEntity getBookEntityByID(Long bookId) {
+        Optional<BookEntity> book = bookRepository.findById(bookId);
+
+        if(book.isEmpty()) {
+            throw new IllegalArgumentException("Book not found. ID: " + bookId);
         }
-        return null;
+
+        return book.get();
     }
 
-    public boolean deleteBook(Long bookId) {
-        return bookDatabase.remove(bookId) != null;
+    private BookEntity mapToEntity(BookRequestDTO dto){
+        BookEntity book = new BookEntity();
+
+        book.setIsbn(dto.getIsbn());
+        book.setCount(dto.getCount());
+        book.setTitle(dto.getTitle());
+        book.setAuthorFirstName(dto.getAuthorFirstName());
+        book.setAuthorLastName(dto.getAuthorLastName());
+
+        return book;
     }
+
+    private List<BookDetailDTO> mapToDtoList(Iterable<BookEntity> bookEntities){
+        List<BookDetailDTO> books = new ArrayList<>();
+
+        bookEntities.forEach(bookEntity -> {
+            BookDetailDTO dto = mapToDto(bookEntity);
+            books.add(dto);
+        });
+
+        return books;
+    }
+
+    private BookDetailDTO mapToDto(BookEntity bookEntity) {
+        BookDetailDTO dto = new BookDetailDTO();
+
+        dto.setId(bookEntity.getId());
+        dto.setIsbn(bookEntity.getIsbn());
+        dto.setCount(bookEntity.getCount());
+        dto.setTitle(bookEntity.getTitle());
+        dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
+        dto.setAuthorLastName(bookEntity.getAuthorLastName());
+        dto.setCategoryDetailDTO(bookEntity.getCategory());
+
+        return dto;
+    }
+
 
 
 }

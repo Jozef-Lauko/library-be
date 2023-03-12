@@ -17,9 +17,9 @@ public class BookController {
     }
 
     @PostMapping("/api/books")
-    public BookDetailDTO createBook(@RequestBody BookRequestDTO bookRequest) {
+    public Long createBook(@RequestBody BookRequestDTO bookRequestDTO) {
         System.out.println("Create book called:");
-        return bookService.createBook(bookRequest);
+        return bookService.createBook(bookRequestDTO);
     }
 
     @GetMapping("/api/books/{bookId}")
@@ -35,15 +35,15 @@ public class BookController {
     }
 
     @PutMapping("/api/books/{bookId}")
-    public BookDetailDTO updateBook(@PathVariable Long bookId,
+    public void updateBook(@PathVariable Long bookId,
                                     @RequestBody BookRequestDTO bookRequest) {
         System.out.println("Update book called: ID = " + bookId);
-        return bookService.updateBook(bookId, bookRequest);
+        bookService.updateBook(bookId, bookRequest);
     }
 
     @DeleteMapping("/api/books/{bookId}")
-    public boolean deleteBook(@PathVariable Long bookId) {
+    public void deleteBook(@PathVariable Long bookId) {
         System.out.println("Delete book called: ID = " + bookId);
-        return bookService.deleteBook(bookId);
+        bookService.deleteBook(bookId);
     }
 }
