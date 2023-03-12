@@ -1,6 +1,11 @@
 package sk.umb.example.library.book.persistance.enity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Category;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.service.CategoryDetailDTO;
+
+import java.util.Set;
 
 @Entity(name = "book")
 public class BookEntity {
@@ -67,7 +72,7 @@ public class BookEntity {
         this.count = count;
     }
 
-    public CategoryEntity getCategory() {
+    public CategoryDetailDTO getCategory() {
         return category;
     }
 

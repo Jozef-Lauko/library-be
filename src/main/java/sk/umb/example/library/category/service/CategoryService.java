@@ -1,5 +1,6 @@
 package sk.umb.example.library.category.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +13,11 @@ import org.apache.logging.log4j.util.Strings;
 public class CategoryService {
     private final Map<Long, CategoryDetailDTO> categoryDatabase = new HashMap<>();
     private final AtomicLong lastIndex = new AtomicLong(0);
-
+    @Transactional
     public CategoryDetailDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
         CategoryDetailDTO categoryDetailDTO = new CategoryDetailDTO();
         categoryDetailDTO.setId(lastIndex.getAndIncrement());
-        categoryDetailDTO.setName(Strings.isBlank(categoryRequestDTO.getName()) ? null : categoryRequestDTO.getName());
+        categoryDetailDTO.setCategory(Strings.isBlank(categoryRequestDTO.getCategory()) ? null : categoryRequestDTO.getCategory());
         categoryDatabase.put(categoryDetailDTO.getId(), categoryDetailDTO);
         return categoryDetailDTO;
     }
@@ -28,18 +29,16 @@ public class CategoryService {
     public List<CategoryDetailDTO> getAllCategories() {
         return new ArrayList<>(categoryDatabase.values());
     }
-
-    public CategoryDetailDTO updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
+    @Transactional
+    public void updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
         CategoryDetailDTO categoryDetailDTO = categoryDatabase.get(categoryId);
         if (categoryDetailDTO != null) {
-            categoryDetailDTO.setName(Strings.isBlank(categoryRequestDTO.getName()) ? null : categoryRequestDTO.getName());
-            return categoryDetailDTO;
+            categoryDetailDTO.setCategory(Strings.isBlank(categoryRequestDTO.getCategory()) ? null : categoryRequestDTO.getCategory());
         }
-        return null;
     }
-
-    public boolean deleteCategory(Long categoryId) {
-        return categoryDatabase.remove(categoryId) != null;
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        categoryDatabase.remove(categoryId);
     }
 
 }

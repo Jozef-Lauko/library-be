@@ -1,6 +1,14 @@
-package sk.umb.example.library.category.service;
+package sk.umb.example.library.category.persistance.entity;
 
-public class CategoryDetailDTO {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
+
+@Entity(name = "category")
+public class CategoryEntity {
+    @Id
+    @GeneratedValue
     private Long id;
     private String category;
 
