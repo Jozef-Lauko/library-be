@@ -1,7 +1,5 @@
 package sk.umb.example.library.book.controller;
 
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.book.service.BookRequestDTO;
@@ -12,8 +10,11 @@ import java.util.List;
 @RestController
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @PostMapping("/api/books")
     public BookDetailDTO createBook(@RequestBody BookRequestDTO bookRequest) {
@@ -23,7 +24,7 @@ public class BookController {
 
     @GetMapping("/api/books/{bookId}")
     public BookDetailDTO getBook(@PathVariable Long bookId) {
-        System.out.println("Get book called.");
+        System.out.println("Get book called: ID = " + bookId);
         return bookService.getBook(bookId);
     }
 
