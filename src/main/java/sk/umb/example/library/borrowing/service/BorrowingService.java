@@ -11,13 +11,6 @@ import sk.umb.example.library.borrowing.persistance.repository.BorrowingReposito
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
-
-
-/* TODO
-    - pockat na BOOK
- */
-
-
 import java.util.*;
 
 public class BorrowingService {
