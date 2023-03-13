@@ -30,8 +30,8 @@ public class BorrowingService {
 
     @Transactional
     public Long createBorrowing(BorrowingRequestDTO borrowingRequestDTO) {
-        BorrowingEntity enitity = mapToEntity(borrowingRequestDTO);
-        return borrowingRepository.save(enitity).getId();
+        BorrowingEntity entity = mapToEntity(borrowingRequestDTO);
+        return borrowingRepository.save(entity).getId();
     }
 
     @Transactional
@@ -110,5 +110,4 @@ public class BorrowingService {
 
         return dto;
     }
-
 }
