@@ -1,17 +1,28 @@
-package sk.umb.example.library.book.service;
+package sk.umb.example.library.book.persistance.enity;
 
+import jakarta.persistence.*;
+import jdk.jfr.Category;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
 import sk.umb.example.library.category.service.CategoryDetailDTO;
 
-import java.util.List;
+import java.util.Set;
 
-public class BookDetailDTO {
+@Entity(name = "book")
+public class BookEntity {
+    @Id
+    @GeneratedValue
     private Long id;
     private String authorFirstName;
     private String authorLastName;
     private String title;
     private String isbn;
     private int count;
-    private CategoryDetailDTO categoryDetailDTO;
+
+    @ManyToMany
+    @JoinTable(name="category_book",
+            joinColumns=@JoinColumn(name="book_id"),
+            inverseJoinColumns=@JoinColumn(name="category_id"))
+    private Set<Category> categories;
 
     public Long getId() {
         return id;
@@ -61,11 +72,11 @@ public class BookDetailDTO {
         this.count = count;
     }
 
-    public CategoryDetailDTO getCategoryDetailDTO() {
-        return categoryDetailDTO;
+    public CategoryDetailDTO getCategory() {
+        return category;
     }
 
-    public void setCategoryDetailDTO(CategoryDetailDTO categoryDetailDTO) {
-        this.categoryDetailDTO = categoryDetailDTO;
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
     }
 }

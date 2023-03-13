@@ -1,18 +1,20 @@
 package sk.umb.example.library.borrowing.controller;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.bind.annotation.*;
 import sk.umb.example.library.borrowing.service.BorrowingDetailDTO;
 import sk.umb.example.library.borrowing.service.BorrowingRequestDTO;
 import sk.umb.example.library.borrowing.service.BorrowingService;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class BorrowingController {
-    private final BorrowingService borrowingService = new BorrowingService();
+
+    private final BorrowingService borrowingService;
+
+    public BorrowingController(BorrowingService borrowingService) {
+        this.borrowingService = borrowingService;
+    }
 
     @GetMapping("/api/borrowings")
     public List<BorrowingDetailDTO> searchBorrowings() {
