@@ -2,12 +2,12 @@ package sk.umb.example.library.book.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import sk.umb.example.library.book.persistance.enity.BookEntity;
+import sk.umb.example.library.book.persistance.entity.BookEntity;
 import sk.umb.example.library.book.persistance.repository.BookRepository;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.service.CategoryDetailDTO;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -85,10 +85,19 @@ public class BookService {
         dto.setTitle(bookEntity.getTitle());
         dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
         dto.setAuthorLastName(bookEntity.getAuthorLastName());
-        dto.setCategoryDetailDTO(bookEntity.getCategory());
+
+        List<CategoryDetailDTO> categoryDtos = new ArrayList<>();
+        for(CategoryEntity categoryEntity : bookEntity.getCategories()) {
+            CategoryDetailDTO categoryDto = new CategoryDetailDTO();
+            categoryDto.setId(categoryEntity.getId());
+            categoryDto.setCategory(categoryEntity.getCategory());
+            categoryDtos.add(categoryDto);
+        }
+        dto.setCategories(new HashSet<>(categoryDtos));
 
         return dto;
     }
+
 
 
 

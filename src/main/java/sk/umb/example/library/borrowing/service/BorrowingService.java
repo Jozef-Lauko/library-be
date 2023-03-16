@@ -3,11 +3,13 @@ package sk.umb.example.library.borrowing.service;
 import jakarta.transaction.Transactional;
 import sk.umb.example.library.address.persistence.entity.AddressEntity;
 import sk.umb.example.library.address.service.AddressDetailDto;
-import sk.umb.example.library.book.persistance.enity.BookEntity;
+import sk.umb.example.library.book.persistance.entity.BookEntity;
 import sk.umb.example.library.book.persistance.repository.BookRepository;
 import sk.umb.example.library.book.service.BookDetailDTO;
 import sk.umb.example.library.borrowing.persistance.entity.BorrowingEntity;
 import sk.umb.example.library.borrowing.persistance.repository.BorrowingRepository;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.service.CategoryDetailDTO;
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
@@ -152,7 +154,15 @@ public class BorrowingService {
         dto.setTitle(bookEntity.getTitle());
         dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
         dto.setAuthorLastName(bookEntity.getAuthorLastName());
-        dto.setCategoryDetailDTO(bookEntity.getCategory());
+
+        List<CategoryDetailDTO> categoryDtos = new ArrayList<>();
+        for(CategoryEntity categoryEntity : bookEntity.getCategories()) {
+            CategoryDetailDTO categoryDto = new CategoryDetailDTO();
+            categoryDto.setId(categoryEntity.getId());
+            categoryDto.setCategory(categoryEntity.getCategory());
+            categoryDtos.add(categoryDto);
+        }
+        dto.setCategories(new HashSet<>(categoryDtos));
 
         return dto;
     }
