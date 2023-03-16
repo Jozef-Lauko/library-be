@@ -1,7 +1,12 @@
 package sk.umb.example.library.book.persistance.enity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Category;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
 import sk.umb.example.library.category.service.CategoryDetailDTO;
+
+import java.util.Set;
+
 
 @Entity(name = "book")
 public class BookEntity {
@@ -70,7 +75,7 @@ public class BookEntity {
     }
 
     public CategoryDetailDTO getCategory() {
-        return categoryDetailDTO;
+        return category;
     }
 
     public void setCategory(CategoryDetailDTO categoryDetailDTO) {
