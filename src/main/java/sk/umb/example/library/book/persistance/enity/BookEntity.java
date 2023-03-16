@@ -7,6 +7,7 @@ import sk.umb.example.library.category.service.CategoryDetailDTO;
 
 import java.util.Set;
 
+
 @Entity(name = "book")
 public class BookEntity {
     @Id
@@ -17,6 +18,7 @@ public class BookEntity {
     private String title;
     private String isbn;
     private int count;
+    private CategoryDetailDTO categoryDetailDTO;
 
     @ManyToMany
     @JoinTable(name="category_book",
@@ -76,7 +78,7 @@ public class BookEntity {
         return category;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
+    public void setCategory(CategoryDetailDTO categoryDetailDTO) {
+        this.categoryDetailDTO = categoryDetailDTO;
     }
 }
