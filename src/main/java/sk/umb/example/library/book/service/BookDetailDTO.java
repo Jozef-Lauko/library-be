@@ -63,14 +63,6 @@ public class BookDetailDTO {
         this.count = count;
     }
 
-    public CategoryDetailDTO getCategoryDetailDTO() {
-        return categoryDetailDTO;
-    }
-
-    public void setCategoryDetailDTO(CategoryDetailDTO categoryDetailDTO) {
-        this.categoryDetailDTO = categoryDetailDTO;
-    }
-
     public Set<CategoryDetailDTO> getCategories() {
         return categories;
     }
@@ -78,4 +70,5 @@ public class BookDetailDTO {
     public void setCategories(Set<CategoryDetailDTO> categories) {
         this.categories = categories;
     }
+
 }

@@ -154,15 +154,16 @@ public class BorrowingService {
         dto.setTitle(bookEntity.getTitle());
         dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
         dto.setAuthorLastName(bookEntity.getAuthorLastName());
-
-        List<CategoryDetailDTO> categoryDtos = new ArrayList<>();
-        for(CategoryEntity categoryEntity : bookEntity.getCategories()) {
-            CategoryDetailDTO categoryDto = new CategoryDetailDTO();
-            categoryDto.setId(categoryEntity.getId());
-            categoryDto.setCategory(categoryEntity.getCategory());
-            categoryDtos.add(categoryDto);
+        if (bookEntity.getCategories() != null) {
+            Set<CategoryDetailDTO> categoryDTOs = new HashSet<>();
+            for (CategoryEntity categoryEntity : bookEntity.getCategories()) {
+                CategoryDetailDTO categoryDTO = new CategoryDetailDTO();
+                categoryDTO.setId(categoryEntity.getId());
+                categoryDTO.setCategory(categoryEntity.getCategory());
+                categoryDTOs.add(categoryDTO);
+            }
+            dto.setCategories(categoryDTOs);
         }
-        dto.setCategories(new HashSet<>(categoryDtos));
 
         return dto;
     }
