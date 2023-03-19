@@ -13,13 +13,19 @@ import java.util.*;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final List<BookDetailDTO> books = new ArrayList<>();
+    public List<BookDetailDTO> getAllBooks(){
+        return mapToDtoList(bookRepository.findAll());
+    }
+    public BookDetailDTO getBookById(Long bookId){
+        return mapToDto(getBookEntityByID(bookId));
+    }
+
+
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public List<BookDetailDTO> getAllBooks() {
-        return mapToDtoList(bookRepository.findAll());
-    }
     public BookDetailDTO getBook(Long bookId) {
         return mapToDto(getBookEntityByID(bookId));
     }
