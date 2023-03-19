@@ -1,76 +1,170 @@
 package sk.umb.example.library.borrowing.service;
 
+import jakarta.transaction.Transactional;
+import sk.umb.example.library.address.persistence.entity.AddressEntity;
+import sk.umb.example.library.address.service.AddressDetailDto;
+import sk.umb.example.library.book.persistance.entity.BookEntity;
+import sk.umb.example.library.book.persistance.repository.BookRepository;
 import sk.umb.example.library.book.service.BookDetailDTO;
+import sk.umb.example.library.borrowing.persistance.entity.BorrowingEntity;
+import sk.umb.example.library.borrowing.persistance.repository.BorrowingRepository;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.service.CategoryDetailDTO;
+import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
+import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
 import sk.umb.example.library.customer.service.CustomerDetailDTO;
 
 
+/* TODO
+    - pockat na BOOK
+ */
+
+
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class BorrowingService {
-    private final Map<Long, BorrowingDetailDTO> borrowingDatabase = new HashMap();
-    private final AtomicLong lastIndex = new AtomicLong(0);
+    private final BorrowingRepository borrowingRepository;
+    private final CustomerRepository customerRepository;
+    private final BookRepository bookRepository;
 
+    public BorrowingService(BorrowingRepository borrowingRepository, CustomerRepository customerRepository, BookRepository bookRepository) {
+        this.borrowingRepository = borrowingRepository;
+        this.customerRepository = customerRepository;
+        this.bookRepository = bookRepository;
+    }
 
     public List<BorrowingDetailDTO> getAllBorrowings() {
-        return new ArrayList<>(borrowingDatabase.values());
+        return mapToDtoList(borrowingRepository.findAll());
     }
 
     public BorrowingDetailDTO getBorrowingById(Long borrowingId) {
-        validateBorrowingExists(borrowingId);
-
-        return borrowingDatabase.get(borrowingId);
+        return maptoDto(getBorrowingEntityByID(borrowingId));
     }
 
+    @Transactional
     public Long createBorrowing(BorrowingRequestDTO borrowingRequestDTO) {
-        BorrowingDetailDTO borrowingDetailDTO = mapToBorrowingDetailDTO(lastIndex.getAndIncrement(),
-                borrowingRequestDTO);
-
-        borrowingDatabase.put(borrowingDetailDTO.getId(), borrowingDetailDTO);
-
-        return borrowingDetailDTO.getId();
+        BorrowingEntity enitity = mapToEntity(borrowingRequestDTO);
+        return borrowingRepository.save(enitity).getId();
     }
 
-    private BorrowingDetailDTO mapToBorrowingDetailDTO(Long index, BorrowingRequestDTO borrowingRequestDTO) {
+    @Transactional
+    public void updateBorrowing(Long borrowingId, BorrowingRequestDTO borrowingRequestDTO) {
+        BorrowingEntity borrowing = getBorrowingEntityByID(borrowingId);
+
+        BorrowingEntity updatedBorrowingEntity = mapToEntity(borrowingRequestDTO);
+        BorrowingDetailDTO updatedDto = maptoDto(updatedBorrowingEntity);
+
+        if((borrowingRequestDTO.getCustomerId()) != null){
+            borrowing.setCustomerDetailDTO(updatedDto.getCustomerDetailDTO());
+        }
+
+        if((borrowingRequestDTO.getBookId()) != null){
+            borrowing.setBookDetailDTO(updatedDto.getBookDetailDTO());
+        }
+
+        borrowing.setDate(new Date());
+    }
+
+    @Transactional
+    public void deleteBorrowing(Long borrowingId) {
+        borrowingRepository.deleteById(borrowingId);
+    }
+
+    private BorrowingEntity getBorrowingEntityByID(Long borrowingId) {
+        Optional<BorrowingEntity>borrowing = borrowingRepository.findById(borrowingId);
+
+        if(borrowing.isEmpty()) {
+            throw new IllegalArgumentException("Borrowing not found. ID: " + borrowingId);
+        }
+
+        return borrowing.get();
+    }
+
+
+    private BorrowingEntity mapToEntity(BorrowingRequestDTO dto) {
+        BorrowingEntity borrowing = new BorrowingEntity();
+
+        if(!Objects.isNull(dto.getCustomerId()) ){
+            Optional<CustomerEntity>customer = customerRepository.findById(dto.getCustomerId());
+
+            if(customer.isPresent()){
+                borrowing.setCustomer(customer.get());
+            }
+        }
+
+        if(!Objects.isNull(dto.getBookId()) ){
+            Optional<BookEntity>book = bookRepository.findById(dto.getBookId());
+
+            if(book.isPresent()){
+                borrowing.setBookEntity(book.get());
+            }
+        }
+
+        return borrowing;
+    }
+
+    private List<BorrowingDetailDTO> mapToDtoList(Iterable<BorrowingEntity> borrowingEntities) {
+        List<BorrowingDetailDTO> borrowings = new ArrayList<>();
+
+        borrowingEntities.forEach(borrowingEntity -> {
+            BorrowingDetailDTO dto = maptoDto(borrowingEntity);
+            borrowings.add(dto);
+        });
+
+        return borrowings;
+    }
+
+    private BorrowingDetailDTO maptoDto(BorrowingEntity borrowingEntity){
         BorrowingDetailDTO dto = new BorrowingDetailDTO();
-
-        CustomerDetailDTO cdDTO = new CustomerDetailDTO();
-        cdDTO.setId(borrowingRequestDTO.getCustomerId());
-        BookDetailDTO bDTO = new BookDetailDTO();
-        bDTO.setId(borrowingRequestDTO.getBookId());
-
-        dto.setId(index);
-        dto.setCustomerDetailDTO(cdDTO);
-        dto.setBookDetailDTO(bDTO);
+        dto.setId(borrowingEntity.getId());
+        dto.setCustomerDetailDTO(mapToDto(borrowingEntity.getCustomer()));
+        dto.setBookDetailDTO(mapToDto(borrowingEntity.getBookEntity()));
         dto.setDate(new Date());
 
         return dto;
     }
 
-    public void updateBorrowing(Long borrowingId, BorrowingRequestDTO borrowingRequestDTO) {
-        validateBorrowingExists(borrowingId);
+    private CustomerDetailDTO mapToDto(CustomerEntity customer) {
+        CustomerDetailDTO dto = new CustomerDetailDTO();
 
-        BorrowingDetailDTO dto = borrowingDatabase.get(borrowingId);
+        dto.setId(customer.getId());
+        dto.setAddress(mapToDto(customer.getAddress()));
+        dto.setFirstName(customer.getFirstName());
+        dto.setLastName(customer.getLastName());
+        dto.setEmailContact(customer.getEmailContact());
 
-        CustomerDetailDTO cdDTO = new CustomerDetailDTO();
-        cdDTO.setId(borrowingRequestDTO.getCustomerId());
-        BookDetailDTO bDTO = new BookDetailDTO();
-        bDTO.setId(borrowingRequestDTO.getBookId());
-
-        dto.setCustomerDetailDTO(cdDTO);
-        dto.setBookDetailDTO(bDTO);
-        dto.setDate(new Date());
+        return dto;
     }
 
-    public void deleteBorrowing(Long borrowingId) {
-        validateBorrowingExists(borrowingId);
+    private AddressDetailDto mapToDto(AddressEntity addressEntity) {
+        AddressDetailDto dto = new AddressDetailDto();
 
-        borrowingDatabase.remove(borrowingId);
+        dto.setId(addressEntity.getId());
+        dto.setCity(addressEntity.getCity());
+
+        return dto;
     }
 
-    private void validateBorrowingExists(Long borrowingId) {
-        if(! borrowingDatabase.containsKey(borrowingId)) {
-            throw new IllegalArgumentException("BorrowingID: "+borrowingId+" does not exist.");
+    private BookDetailDTO mapToDto(BookEntity bookEntity) {
+        BookDetailDTO dto = new BookDetailDTO();
+
+        dto.setId(bookEntity.getId());
+        dto.setIsbn(bookEntity.getIsbn());
+        dto.setCount(bookEntity.getCount());
+        dto.setTitle(bookEntity.getTitle());
+        dto.setAuthorFirstName(bookEntity.getAuthorFirstName());
+        dto.setAuthorLastName(bookEntity.getAuthorLastName());
+        if (bookEntity.getCategories() != null) {
+            Set<CategoryDetailDTO> categoryDTOs = new HashSet<>();
+            for (CategoryEntity categoryEntity : bookEntity.getCategories()) {
+                CategoryDetailDTO categoryDTO = new CategoryDetailDTO();
+                categoryDTO.setId(categoryEntity.getId());
+                categoryDTO.setCategory(categoryEntity.getCategory());
+                categoryDTOs.add(categoryDTO);
+            }
+            dto.setCategories(categoryDTOs);
         }
+
+        return dto;
     }
 }
