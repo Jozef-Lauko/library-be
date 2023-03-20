@@ -2,7 +2,7 @@ package sk.umb.example.library.book.service;
 
 import sk.umb.example.library.category.service.CategoryDetailDTO;
 
-import java.util.Set;
+import java.util.List;
 
 public class BookDetailDTO {
     private Long id;
@@ -12,8 +12,6 @@ public class BookDetailDTO {
     private String isbn;
     private int count;
     private CategoryDetailDTO categoryDetailDTO;
-
-    private Set<CategoryDetailDTO> categories;
 
     public Long getId() {
         return id;
@@ -63,12 +61,11 @@ public class BookDetailDTO {
         this.count = count;
     }
 
-    public Set<CategoryDetailDTO> getCategories() {
-        return categories;
+    public CategoryDetailDTO getCategoryDetailDTO() {
+        return categoryDetailDTO;
     }
 
-    public void setCategories(Set<CategoryDetailDTO> categories) {
-        this.categories = categories;
+    public void setCategoryDetailDTO(CategoryDetailDTO categoryDetailDTO) {
+        this.categoryDetailDTO = categoryDetailDTO;
     }
-
 }

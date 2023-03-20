@@ -3,7 +3,7 @@ package sk.umb.example.library.category.service;
 public class CategoryRequestDTO {
     private String category;
 
-    public String getCategory() {
+    public String getCategoryName() {
         return category;
     }
 

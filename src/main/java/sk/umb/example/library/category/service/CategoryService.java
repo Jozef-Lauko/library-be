@@ -36,8 +36,8 @@ public class CategoryService {
     public void updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
         CategoryEntity category = getCategoryEntityById(categoryId);
 
-        if (!Strings.isEmpty(categoryRequestDTO.getCategory())){
-            category.setCategory(categoryRequestDTO.getCategory());
+        if (!Strings.isEmpty(categoryRequestDTO.getCategoryName())){
+            category.setCategoryName(categoryRequestDTO.getCategoryName());
         }
 
         categoryRepository.save(category);
@@ -61,14 +61,14 @@ public class CategoryService {
     private CategoryDetailDTO mapToDto(CategoryEntity categoryEntity) {
         CategoryDetailDTO dto = new CategoryDetailDTO();
         dto.setId(categoryEntity.getId());
-        dto.setCategory(categoryEntity.getCategory());
+        dto.setCategory(categoryEntity.getCategoryName());
 
         return dto;
     }
     private CategoryEntity mapToEntity(CategoryRequestDTO dto) {
         CategoryEntity category = new CategoryEntity();
 
-        category.setCategory(dto.getCategory());
+        category.setCategoryName(dto.getCategoryName());
         return category;
 
     }
@@ -80,5 +80,4 @@ public class CategoryService {
         }
         return category.get();
     }
-
 }

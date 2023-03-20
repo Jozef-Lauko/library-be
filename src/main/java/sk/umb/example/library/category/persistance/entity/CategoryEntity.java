@@ -20,11 +20,11 @@ public class CategoryEntity {
         this.id = id;
     }
 
-    public String getCategory() {
+    public String getCategoryName() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategoryName(String category) {
         this.category = category;
     }
 }
