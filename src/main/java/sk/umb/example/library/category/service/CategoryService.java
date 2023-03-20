@@ -1,44 +1,84 @@
 package sk.umb.example.library.category.service;
 
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.persistance.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
-    private final Map<Long, CategoryDetailDTO> categoryDatabase = new HashMap<>();
-    private final AtomicLong lastIndex = new AtomicLong(0);
+    private final CategoryRepository categoryRepository;
+    public CategoryService(CategoryRepository categoryRepository){
+        this.categoryRepository = categoryRepository;
+    }
+    public List<CategoryDetailDTO> getAllCategories(){
+        return mapToDtoList(categoryRepository.findAll());
+    }
+
+    public List<CategoryDetailDTO> searchCategoryByName(String categoryName){
+        return mapToDtoList(categoryRepository.findByCategory(categoryName));
+    }
+
+    public CategoryDetailDTO getCategoryById(Long categoryId){
+        return mapToDto(getCategoryEntityById(categoryId));
+    }
+
     @Transactional
-    public CategoryDetailDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
-        CategoryDetailDTO categoryDetailDTO = new CategoryDetailDTO();
-        categoryDetailDTO.setId(lastIndex.getAndIncrement());
-        categoryDetailDTO.setCategory(Strings.isBlank(categoryRequestDTO.getCategory()) ? null : categoryRequestDTO.getCategory());
-        categoryDatabase.put(categoryDetailDTO.getId(), categoryDetailDTO);
-        return categoryDetailDTO;
-    }
+    public Long createCategory(CategoryRequestDTO categoryRequestDTO) {
+        CategoryEntity entity = mapToEntity(categoryRequestDTO);
 
-    public CategoryDetailDTO getCategory(Long categoryId) {
-        return categoryDatabase.get(categoryId);
-    }
-
-    public List<CategoryDetailDTO> getAllCategories() {
-        return new ArrayList<>(categoryDatabase.values());
+        return categoryRepository.save(entity).getId();
     }
     @Transactional
     public void updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
-        CategoryDetailDTO categoryDetailDTO = categoryDatabase.get(categoryId);
-        if (categoryDetailDTO != null) {
-            categoryDetailDTO.setCategory(Strings.isBlank(categoryRequestDTO.getCategory()) ? null : categoryRequestDTO.getCategory());
+        CategoryEntity category = getCategoryEntityById(categoryId);
+
+        if (!Strings.isEmpty(categoryRequestDTO.getCategory())){
+            category.setCategory(categoryRequestDTO.getCategory());
         }
+
+        categoryRepository.save(category);
+
     }
     @Transactional
     public void deleteCategory(Long categoryId) {
-        categoryDatabase.remove(categoryId);
+        categoryRepository.deleteById(categoryId);
+    }
+
+    private List<CategoryDetailDTO> mapToDtoList(Iterable<CategoryEntity> categoryEntities){
+        List<CategoryDetailDTO> categories = new ArrayList<>();
+
+        categoryEntities.forEach(categoryEntity -> {
+            CategoryDetailDTO dto = mapToDto(categoryEntity);
+            categories.add(dto);
+        });
+        return categories;
+    }
+
+    private CategoryDetailDTO mapToDto(CategoryEntity categoryEntity) {
+        CategoryDetailDTO dto = new CategoryDetailDTO();
+        dto.setId(categoryEntity.getId());
+        dto.setCategory(categoryEntity.getCategory());
+
+        return dto;
+    }
+    private CategoryEntity mapToEntity(CategoryRequestDTO dto) {
+        CategoryEntity category = new CategoryEntity();
+
+        category.setCategory(dto.getCategory());
+        return category;
+
+    }
+
+    private CategoryEntity getCategoryEntityById(Long categoryId) {
+        Optional<CategoryEntity> category = categoryRepository.findById(categoryId);
+        if (category.isEmpty()){
+            throw new IllegalArgumentException("Category not found. ID: " + categoryId);
+        }
+        return category.get();
     }
 
 }
