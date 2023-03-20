@@ -1,11 +1,8 @@
 package sk.umb.example.library.book.controller;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sk.umb.example.library.book.service.BookDetailDTO;
-import sk.umb.example.library.book.service.BookRequestDTO;
-import sk.umb.example.library.book.service.BookService;
 
 import java.util.List;
 
