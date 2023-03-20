@@ -1,6 +1,7 @@
 package sk.umb.example.library.book.service;
 
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import sk.umb.example.library.book.persistance.entity.BookEntity;
 import sk.umb.example.library.book.persistance.repository.BookRepository;
@@ -39,9 +40,23 @@ public class BookService {
     @Transactional
     public void updateBook(Long bookId, BookRequestDTO bookRequestDTO){
         BookEntity book = getBookEntityByID(bookId);
+        if (!Strings.isEmpty(bookRequestDTO.getAuthorFirstName())){
+            book.setAuthorFirstName(bookRequestDTO.getAuthorFirstName());
+        }
+        if (!Strings.isEmpty(bookRequestDTO.getAuthorLastName())){
+            book.setAuthorLastName(bookRequestDTO.getAuthorLastName());
+        }
+        if (!Strings.isEmpty(bookRequestDTO.getTitle())){
+            book.setTitle(bookRequestDTO.getTitle());
+        }
+        if (!Strings.isEmpty(bookRequestDTO.getIsbn())){
+            book.setIsbn(bookRequestDTO.getIsbn());
+        }
 
-        BookEntity updateBookEntity = mapToEntity(bookRequestDTO);
-        BookDetailDTO updateDto = mapToDto(updateBookEntity);
+        book.setCount(bookRequestDTO.getCount());
+
+        bookRepository.save(book);
+
     }
 
     @Transactional

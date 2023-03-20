@@ -9,7 +9,7 @@ public class BookRequestDTO {
     private String title;
     private String isbn;
     private int count;
-    private List<Long> categoryIds;
+    private Long categoryIds;
 
     public String getAuthorFirstName() {
         return authorFirstName;
@@ -51,11 +51,11 @@ public class BookRequestDTO {
         this.count = count;
     }
 
-    public List<Long> getCategoryIds() {
+    public Long getCategoryIds() {
         return categoryIds;
     }
 
-    public void setCategoryIds(List<Long> categoryIds) {
+    public void setCategoryIds(Long categoryIds) {
         this.categoryIds = categoryIds;
     }
 }
