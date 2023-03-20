@@ -1,45 +1,83 @@
 package sk.umb.example.library.category.service;
 
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import sk.umb.example.library.category.persistance.entity.CategoryEntity;
+import sk.umb.example.library.category.persistance.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
-    private final Map<Long, CategoryDetailDTO> categoryDatabase = new HashMap<>();
-    private final AtomicLong lastIndex = new AtomicLong(0);
-
-    public CategoryDetailDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
-        CategoryDetailDTO categoryDetailDTO = new CategoryDetailDTO();
-        categoryDetailDTO.setId(lastIndex.getAndIncrement());
-        categoryDetailDTO.setName(Strings.isBlank(categoryRequestDTO.getName()) ? null : categoryRequestDTO.getName());
-        categoryDatabase.put(categoryDetailDTO.getId(), categoryDetailDTO);
-        return categoryDetailDTO;
+    private final CategoryRepository categoryRepository;
+    public CategoryService(CategoryRepository categoryRepository){
+        this.categoryRepository = categoryRepository;
+    }
+    public List<CategoryDetailDTO> getAllCategories(){
+        return mapToDtoList(categoryRepository.findAll());
     }
 
-    public CategoryDetailDTO getCategory(Long categoryId) {
-        return categoryDatabase.get(categoryId);
+    public List<CategoryDetailDTO> searchCategoryByName(String categoryName){
+        return mapToDtoList(categoryRepository.findByCategory(categoryName));
     }
 
-    public List<CategoryDetailDTO> getAllCategories() {
-        return new ArrayList<>(categoryDatabase.values());
+    public CategoryDetailDTO getCategoryById(Long categoryId){
+        return mapToDto(getCategoryEntityById(categoryId));
     }
 
-    public CategoryDetailDTO updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
-        CategoryDetailDTO categoryDetailDTO = categoryDatabase.get(categoryId);
-        if (categoryDetailDTO != null) {
-            categoryDetailDTO.setName(Strings.isBlank(categoryRequestDTO.getName()) ? null : categoryRequestDTO.getName());
-            return categoryDetailDTO;
+    @Transactional
+    public Long createCategory(CategoryRequestDTO categoryRequestDTO) {
+        CategoryEntity entity = mapToEntity(categoryRequestDTO);
+
+        return categoryRepository.save(entity).getId();
+    }
+    @Transactional
+    public void updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO) {
+        CategoryEntity category = getCategoryEntityById(categoryId);
+
+        if (!Strings.isEmpty(categoryRequestDTO.getCategoryName())){
+            category.setCategoryName(categoryRequestDTO.getCategoryName());
         }
-        return null;
+
+        categoryRepository.save(category);
+
+    }
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
     }
 
-    public boolean deleteCategory(Long categoryId) {
-        return categoryDatabase.remove(categoryId) != null;
+    private List<CategoryDetailDTO> mapToDtoList(Iterable<CategoryEntity> categoryEntities){
+        List<CategoryDetailDTO> categories = new ArrayList<>();
+
+        categoryEntities.forEach(categoryEntity -> {
+            CategoryDetailDTO dto = mapToDto(categoryEntity);
+            categories.add(dto);
+        });
+        return categories;
     }
 
+    private CategoryDetailDTO mapToDto(CategoryEntity categoryEntity) {
+        CategoryDetailDTO dto = new CategoryDetailDTO();
+        dto.setId(categoryEntity.getId());
+        dto.setCategory(categoryEntity.getCategoryName());
+
+        return dto;
+    }
+    private CategoryEntity mapToEntity(CategoryRequestDTO dto) {
+        CategoryEntity category = new CategoryEntity();
+
+        category.setCategoryName(dto.getCategoryName());
+        return category;
+
+    }
+
+    private CategoryEntity getCategoryEntityById(Long categoryId) {
+        Optional<CategoryEntity> category = categoryRepository.findById(categoryId);
+        if (category.isEmpty()){
+            throw new IllegalArgumentException("Category not found. ID: " + categoryId);
+        }
+        return category.get();
+    }
 }

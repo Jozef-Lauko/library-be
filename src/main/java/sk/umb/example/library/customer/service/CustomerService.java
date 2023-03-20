@@ -1,5 +1,6 @@
 package sk.umb.example.library.customer.service;
 
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import sk.umb.example.library.address.persistence.entity.AddressEntity;
@@ -7,7 +8,7 @@ import sk.umb.example.library.address.persistence.repository.AddressRepository;
 import sk.umb.example.library.address.service.AddressDetailDto;
 import sk.umb.example.library.customer.persistence.entity.CustomerEntity;
 import sk.umb.example.library.customer.persistence.repository.CustomerRepository;
-import javax.transaction.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,27 +26,27 @@ public class CustomerService {
         this.addressRepository = addressRepository;
     }
 
-    public List<CustomerDetailDto> getAllCustomers() {
+    public List<CustomerDetailDTO> getAllCustomers() {
         return mapToDtoList(customerRepository.findAll());
     }
 
-    public List<CustomerDetailDto> searchCustomerByLastName(String lastName) {
+    public List<CustomerDetailDTO> searchCustomerByLastName(String lastName) {
         return mapToDtoList(customerRepository.findByLastName(lastName));
     }
 
-    public CustomerDetailDto getCustomerById(Long customerId) {
+    public CustomerDetailDTO getCustomerById(Long customerId) {
         return mapToDto(getCustomerEntityById(customerId));
     }
 
     @Transactional
-    public Long createCustomer(CustomerRequestDto customerRequestDto) {
+    public Long createCustomer(CustomerRequestDTO customerRequestDto) {
         CustomerEntity entity = mapToEntity(customerRequestDto);
 
         return customerRepository.save(entity).getId();
     }
 
     @Transactional
-    public void updateCustomer(Long customerId, CustomerRequestDto customerRequestDTO) {
+    public void updateCustomer(Long customerId, CustomerRequestDTO customerRequestDTO) {
         CustomerEntity customer = getCustomerEntityById(customerId);
 
         if (! Strings.isEmpty(customerRequestDTO.getFirstName())) {
@@ -78,7 +79,7 @@ public class CustomerService {
         return customer.get();
     }
 
-    private CustomerEntity mapToEntity(CustomerRequestDto dto) {
+    private CustomerEntity mapToEntity(CustomerRequestDTO dto) {
         CustomerEntity customer = new CustomerEntity();
 
         if ( ! Objects.isNull(dto.getAddressId()) ) {
@@ -96,19 +97,19 @@ public class CustomerService {
         return customer;
     }
 
-    private List<CustomerDetailDto> mapToDtoList(Iterable<CustomerEntity> customerEntities) {
-        List<CustomerDetailDto> customers = new ArrayList<>();
+    private List<CustomerDetailDTO> mapToDtoList(Iterable<CustomerEntity> customerEntities) {
+        List<CustomerDetailDTO> customers = new ArrayList<>();
 
         customerEntities.forEach(customerEntity -> {
-            CustomerDetailDto dto = mapToDto(customerEntity);
+            CustomerDetailDTO dto = mapToDto(customerEntity);
             customers.add(dto);
         });
 
         return customers;
     }
 
-    private CustomerDetailDto mapToDto(CustomerEntity customerEntity) {
-        CustomerDetailDto dto = new CustomerDetailDto();
+    private CustomerDetailDTO mapToDto(CustomerEntity customerEntity) {
+        CustomerDetailDTO dto = new CustomerDetailDTO();
         dto.setId(customerEntity.getId());
         dto.setAddress(mapToDto(customerEntity.getAddress()));
         dto.setFirstName(customerEntity.getFirstName());

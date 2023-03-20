@@ -2,7 +2,7 @@ package sk.umb.example.library.customer.service;
 
 import sk.umb.example.library.address.service.AddressDetailDto;
 
-public class CustomerDetailDto {
+public class CustomerDetailDTO {
     private Long id;
     private String firstName;
     private String lastName;

@@ -1,47 +1,52 @@
 package sk.umb.example.library.category.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.bind.annotation.*;
 import sk.umb.example.library.category.service.CategoryDetailDTO;
 import sk.umb.example.library.category.service.CategoryRequestDTO;
 import sk.umb.example.library.category.service.CategoryService;
 
+
 import java.util.List;
 
 @RestController
 public class CategoryController {
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
+    public CategoryController(CategoryService categoryService){
+        this.categoryService = categoryService;
+    }
     @PostMapping("/api/categories")
-    public CategoryDetailDTO createCategory(@RequestBody CategoryRequestDTO categoryRequest) {
+    public Long createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO) {
         System.out.println("Create category called:");
-        return categoryService.createCategory(categoryRequest);
+        return categoryService.createCategory(categoryRequestDTO);
     }
 
     @GetMapping("/api/categories/{categoryId}")
     public CategoryDetailDTO getCategory(@PathVariable Long categoryId) {
         System.out.println("Get category called.");
-        return categoryService.getCategory(categoryId);
+        return categoryService.getCategoryById(categoryId);
     }
 
     @GetMapping("/api/categories")
-    public List<CategoryDetailDTO> getAllCategories() {
+    public List<CategoryDetailDTO> searchCategory(@PathVariable(required = false) String category) {
         System.out.println("Get all categories:");
-        return categoryService.getAllCategories();
+
+        return Strings.isEmpty(category) ? categoryService.getAllCategories() :
+                categoryService.searchCategoryByName(category);
     }
 
     @PutMapping("/api/categories/{categoryId}")
-    public CategoryDetailDTO updateCategory(@PathVariable Long categoryId,
-                                    @RequestBody CategoryRequestDTO categoryRequest) {
+    public void updateCategory(@PathVariable Long categoryId,
+                                    @RequestBody CategoryRequestDTO categoryRequestDTO) {
         System.out.println("Update category called: ID = " + categoryId);
-        return categoryService.updateCategory(categoryId, categoryRequest);
+        categoryService.updateCategory(categoryId, categoryRequestDTO);
     }
 
     @DeleteMapping("/api/categories/{categoryId}")
-    public boolean deleteCategory(@PathVariable Long categoryId) {
+    public void deleteCategory(@PathVariable Long categoryId) {
         System.out.println("Delete category called: ID = " + categoryId);
-        return categoryService.deleteCategory(categoryId);
+        categoryService.deleteCategory(categoryId);
     }
 
 }

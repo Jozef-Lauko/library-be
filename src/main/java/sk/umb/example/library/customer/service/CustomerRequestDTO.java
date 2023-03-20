@@ -1,6 +1,6 @@
 package sk.umb.example.library.customer.service;
 
-public class CustomerRequestDto {
+public class CustomerRequestDTO {
     private String firstName;
     private String lastName;
 

@@ -1,5 +1,6 @@
 package sk.umb.example.library.address.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import sk.umb.example.library.address.persistence.entity.AddressEntity;
 import sk.umb.example.library.address.persistence.repository.AddressRepository;
@@ -23,6 +24,7 @@ public class AddressService {
         return addressRepository.save(mapToEntity(requestDto)).getId();
     }
 
+    @Transactional
     private List<AddressDetailDto> mapToDto(List<AddressEntity> addressEntities) {
         List<AddressDetailDto> dtos = new ArrayList<>();
 
